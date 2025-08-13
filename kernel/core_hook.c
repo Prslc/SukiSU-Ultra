@@ -607,10 +607,12 @@ int ksu_handle_prctl(int option, unsigned long arg2, unsigned long arg3,
 	if (arg2 == CMD_HOOK_TYPE) {
 		const char *hook_type;
 		
-#ifdef CONFIG_KSU_MANUAL_HOOK
-		hook_type = "Manual";
-#elif defined(CONFIG_KSU_KPROBES_HOOK)
+#if defined(CONFIG_KSU_KPROBES_HOOK)
 		hook_type = "Kprobes";
+#elif defined(CONFIG_KSU_TRACEPOINT_HOOK)
+		hook_type = "Tracepoint";
+#elif defined(CONFIG_KSU_MANUAL_HOOK)
+		hook_type = "Manual";
 #else
 		hook_type = "Unknown";
 #endif

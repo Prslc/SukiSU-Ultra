@@ -8,6 +8,11 @@ kernelsu-objs += core_hook.o
 kernelsu-objs += ksud.o
 kernelsu-objs += embed_ksud.o
 kernelsu-objs += kernel_compat.o
+kernelsu-objs += kernel_compat.o
+
+ifeq ($(strip $(CONFIG_KSU_TRACEPOINT_HOOK)),y)
+kernelsu-objs += ksu_trace.o
+endif
 
 kernelsu-objs += selinux/selinux.o
 kernelsu-objs += selinux/sepolicy.o
@@ -17,6 +22,7 @@ ccflags-y += -I$(srctree)/security/selinux -I$(srctree)/security/selinux/include
 ccflags-y += -I$(objtree)/security/selinux -include $(srctree)/include/uapi/asm-generic/errno.h
 
 obj-$(CONFIG_KSU) += kernelsu.o
+obj-$(CONFIG_KSU_TRACEPOINT_HOOK) += ksu_trace_export.o
 
 obj-$(CONFIG_KPM) += kpm/
 
@@ -71,11 +77,12 @@ endif
 ccflags-y += -DKSU_VERSION=$(KSU_VERSION)
 ccflags-y += -DKSU_VERSION_FULL=\"$(KSU_VERSION_FULL)\"
 
-ifeq ($(strip $(CONFIG_KSU_MANUAL_HOOK)),y)
-$(info -- SukiSU: CONFIG_KSU_MANUAL_HOOK)
-else
+ifeq ($(strip $(CONFIG_KSU_KPROBES_HOOK)),y)
 $(info -- SukiSU: CONFIG_KSU_KPROBES_HOOK)
-ccflags-y += -DCONFIG_KSU_KPROBES_HOOK
+else ifeq ($(strip $(CONFIG_KSU_TRACEPOINT_HOOK)),y)
+$(info -- SukiSU: CONFIG_KSU_TRACEPOINT_HOOK)
+else ifeq ($(strip $(CONFIG_KSU_MANUAL_HOOK)),y)
+$(info -- SukiSU: CONFIG_KSU_MANUAL_HOOK)
 endif
 
 KERNEL_VERSION := $(VERSION).$(PATCHLEVEL)

@@ -58,6 +58,10 @@ extern void ksu_sucompat_init();
 extern void ksu_sucompat_exit();
 extern void ksu_ksud_init();
 extern void ksu_ksud_exit();
+#ifdef CONFIG_KSU_TRACEPOINT_HOOK
+extern void ksu_trace_register();
+extern void ksu_trace_unregister();
+#endif
 
 int __init ksu_kernelsu_init(void)
 {
@@ -100,6 +104,10 @@ int __init ksu_kernelsu_init(void)
 	pr_alert("KPROBES is disabled, KernelSU may not work, please check https://kernelsu.org/guide/how-to-integrate-for-non-gki.html");
 #endif
 
+#ifdef CONFIG_KSU_TRACEPOINT_HOOK
+    ksu_trace_register();
+#endif
+
 #ifdef MODULE
 #ifndef CONFIG_KSU_DEBUG
 	kobject_del(&THIS_MODULE->mkobj.kobj);
@@ -124,6 +132,11 @@ void ksu_kernelsu_exit(void)
 #ifdef CONFIG_KSU_KPROBES_HOOK
 	ksu_ksud_exit();
 #endif
+
+#ifdef CONFIG_KSU_TRACEPOINT_HOOK
+    ksu_trace_unregister();
+#endif
+
 	ksu_sucompat_exit();
 
 	ksu_core_exit();
