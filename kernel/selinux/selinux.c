@@ -115,7 +115,8 @@ bool ksu_getenforce()
 #endif
 }
 
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 10, 0)) &&                         \
+// https://elixir.bootlin.com/linux/v4.11.12/source/security/selinux/include/objsec.h
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 11, 0)) &&                         \
 	!defined(KSU_COMPAT_HAS_CURRENT_SID)
 /*
  * get the subjective security ID of the current task
